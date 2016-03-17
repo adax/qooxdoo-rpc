@@ -2,17 +2,14 @@
  * Qooxdoo json rpc server for nodejs express framework
  * Author: Jeffry L. <paragasu@gmail.com>
  * Website: paragasu.github.io
+ * License: MIT
  */
 
-var express = function(req, res, next){
+'use strict';
 
-  
-    
+module.exports = function(req, res, next){
 
-  next();
-}
+  req.qx = req.body;
 
-
-module.exports = {
-  express: express
+  res.end();
 }
