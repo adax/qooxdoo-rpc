@@ -1,0 +1,42 @@
+{
+  "name": "qooxdoo-rpc",
+  "version": "0.1.0",
+  "description": "Qooxdoo json rpc server for node js express framework",
+  "main": "index.js",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "test": "npm run test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/paragasu/qooxdoo-rpc.git"
+  },
+  "keywords": [
+    "qooxdoo",
+    "json",
+    "rpc",
+    "json-rpc",
+    "qooxdoo",
+    "json",
+    "rpc",
+    "qooxdoo",
+    "express",
+    "qooxdoo",
+    "connect"
+  ],
+  "author": "Jeffry L.",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/paragasu/qooxdoo-rpc/issues"
+  },
+  "homepage": "https://github.com/paragasu/qooxdoo-rpc#readme",
+  "devDependencies": {
+    "express": "^4.13.4",
+    "mocha": "^2.4.5"
+  },
+  "dependencies": {
+    "body-parser": "^1.15.0"
+  }
+}

@@ -7,9 +7,17 @@
 
 'use strict';
 
-module.exports = function(req, res, next){
+module.exports = Qooxdoo;
 
-  req.qx = req.body;
-
-  res.end();
+function Qooxdoo(req, res){
+  this.qx = req.body;   
 }
+
+
+Qooxdoo.prototype.service =  function(name, fn){
+   
+}
+
+Qooxdoo.prototype._handle_method: function(){
+}
+
