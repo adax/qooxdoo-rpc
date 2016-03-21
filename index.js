@@ -12,6 +12,7 @@ const Error = require('lib/error');
 module.exports = Qooxdoo;
 
 function Qooxdoo(req, res){
+
   this.qx = req.body;   
 }
 
