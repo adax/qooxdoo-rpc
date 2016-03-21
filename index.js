@@ -7,6 +7,8 @@
 
 'use strict';
 
+const Error = require('lib/error');
+
 module.exports = Qooxdoo;
 
 function Qooxdoo(req, res){
@@ -14,10 +16,23 @@ function Qooxdoo(req, res){
 }
 
 
-Qooxdoo.prototype.service =  function(name, fn){
-   
-}
+/**
+ * Add service to match with the service request and
+ * try to execute object method based on the request
+ * @param string name service route
+ * @param object cb callback object
+ */
+Qooxdoo.prototype.service =  function(name, cb){
 
-Qooxdoo.prototype._handle_method: function(){
-}
+  let method = this.qx.method;
+ 
+  if(typeof cb != 'object'){
+    throw Error.code.CLASS_NOT_FOUND;
+  }
 
+  if(typeof cb[method] != 'function'){
+    throw Error.code.METHOD_NOT_FOUND;  
+  }
+
+  cb[method].apply(this.qx.params)
+}
