@@ -10,21 +10,63 @@
 const request = require('superagent');
 const assert  = require('assert');
 const should  = require('should');
+const QX_URL  = 'http://localhost:6000/rpc';
+const qx  = require('../index')
+const bp  = require('body-parser')
+const app = require('express')();
+
+function qx_param(service, method, params){
+  return {
+    id: 0,
+    service: service || 'test',
+    method: method,
+    params: params || null  
+  }
+}
 
 describe('Standard API', function(){
+
+  before(function(){
+
+
+    app.use(bp.urlencoded({extended:false}))
+    app.use(bp.json())
+
+  /*
+    app.service('test', function(){
+    });
+  */
+
+    app.use('/rpc', qx)
+    app.listen(6000)
+  })
+
   it('echo', function(done){
+
+    var param = qx_param({
+      method: "echo",
+      params: ["Hello World"]
+    })    
+
     request
-    .post('localhost:4000')
+    .post(QX_URL)
     .send(param)
     .end(function(err, res){
-      //Client said: [<param>]
+      console.log(res.body);
+      res.body.error.should.equal(null);
+      res.body.result.should.equal("Hello World");
       done() 
     })
   })
 
   it('sink', function(done){
+
+    var param = qx_param({
+      method: 'sink'
+    })    
+
     request
-    .post('localhost:4000')
+    .post(QX_URL)
     .send(param)
     .end(function(err, res){
       //240s delay
@@ -33,78 +75,119 @@ describe('Standard API', function(){
   })
   
   it('sleep', function(done){
+
+    var param = qx_param({
+      method: 'sleep',
+      param: [5]
+    })    
+
     request
-    .post('localhost:4000')
+    .post(QX_URL)
     .send(param)
     .end(function(err, res){
-      //240s delay
       done() 
     })
   })
 
   it('getInteger', function(done){
+
+    var param = qx_param({
+      method: 'getInteger',
+      params: [1]
+    })    
+
     request
-    .post('localhost:4000')
+    .post(QX_URL)
     .send(param)
     .end(function(err, res){
-      //240s delay
+      res.body.result.should.equal(1)
       done() 
     })
   })
 
   it('getFloat', function(done){
+
+    var param = qx_param({
+      method: 'getFloat',
+      params: [1/3]
+    })    
+
     request
-    .post('localhost:4000')
+    .post(QX_URL)
     .send(param)
     .end(function(err, res){
-      //240s delay
+      res.body.result.should.equal(0.33333)
       done() 
     })
   })
 
   it('getString', function(done){
+
+    var param = qx_param({
+      method: 'getString',
+      params: ["Hello World"]
+    })    
+
     request
-    .post('localhost:4000')
+    .post(QX_URL)
     .send(param)
     .end(function(err, res){
-      //240s delay
+      res.body.result.should.equal("Hello World")
       done() 
     })
   })
 
   it('getArrayInteger', function(done){
+
+    var param = qx_param({
+      method: 'getArrayInteger',
+      params: [1,2,3,4]
+    })    
+
     request
-    .post('localhost:4000')
+    .post(QX_URL)
     .send(param)
     .end(function(err, res){
-      //240s delay
+      res.body.result.should.equal([1,2,3,4])
       done() 
     })
   })
 
   it('getArrayString', function(done){
+
+    var param = qx_param({
+      method: "getArrayString",
+      params: ["one", "two", "three", "four"]
+    })    
+
     request
-    .post('localhost:4000')
+    .post(QX_URL)
     .send(param)
     .end(function(err, res){
-      //240s delay
+      res.body.result.should.equal(["one", "two", "three", "four"])
       done() 
     })
   })
 
   it('getObject', function(done){
+
+    var param = qx_param({
+      method: "getObject",
+      params: {}
+    })
+
     request
-    .post('localhost:4000')
+    .post(QX_URL)
     .send(param)
     .end(function(err, res){
-      //240s delay
+      assert.equal(typeof res.body.result, "object")  
       done() 
     })
   })
 
   it('getTrue', function(done){
     request
-    .post('localhost:4000')
+    .post(QX_URL)
     .send(param)
     .end(function(err, res){
       //240s delay
@@ -114,7 +197,7 @@ describe('Standard API', function(){
 
   it('getFalse', function(done){
     request
-    .post('localhost:4000')
+    .post(QX_URL)
     .send(param)
     .end(function(err, res){
       //240s delay
@@ -124,7 +207,7 @@ describe('Standard API', function(){
 
   it('getNull', function(done){
     request
-    .post('localhost:4000')
+    .post(QX_URL)
     .send(param)
     .end(function(err, res){
       //240s delay
@@ -134,7 +217,7 @@ describe('Standard API', function(){
 
   it('isInteger', function(done){
     request
-    .post('localhost:4000')
+    .post(QX_URL)
     .send(param)
     .end(function(err, res){
       //240s delay
@@ -144,7 +227,7 @@ describe('Standard API', function(){
 
   it('isFloat', function(done){
     request
-    .post('localhost:4000')
+    .post(QX_URL)
     .send(param)
     .end(function(err, res){
       //240s delay
@@ -154,7 +237,7 @@ describe('Standard API', function(){
 
   it('isString', function(done){
     request
-    .post('localhost:4000')
+    .post(QX_URL)
     .send(param)
     .end(function(err, res){
       //240s delay
@@ -164,7 +247,7 @@ describe('Standard API', function(){
 
   it('isBoolean', function(done){
     request
-    .post('localhost:4000')
+    .post(QX_URL)
     .send(param)
     .end(function(err, res){
       //240s delay
@@ -174,7 +257,7 @@ describe('Standard API', function(){
 
   it('isArray', function(done){
     request
-    .post('localhost:4000')
+    .post(QX_URL)
     .send(param)
     .end(function(err, res){
       //240s delay
@@ -184,7 +267,7 @@ describe('Standard API', function(){
 
   it('isObject', function(done){
     request
-    .post('localhost:4000')
+    .post(QX_URL)
     .send(param)
     .end(function(err, res){
       //240s delay
@@ -194,7 +277,7 @@ describe('Standard API', function(){
 
   it('isNull', function(done){
     request
-    .post('localhost:4000')
+    .post(QX_URL)
     .send(param)
     .end(function(err, res){
       //240s delay
@@ -204,7 +287,7 @@ describe('Standard API', function(){
 
   it('getParams', function(done){
     request
-    .post('localhost:4000')
+    .post(QX_URL)
     .send(param)
     .end(function(err, res){
       //240s delay
@@ -214,7 +297,7 @@ describe('Standard API', function(){
 
   it('getParam', function(done){
     request
-    .post('localhost:4000')
+    .post(QX_URL)
     .send(param)
     .end(function(err, res){
       //240s delay
@@ -224,7 +307,7 @@ describe('Standard API', function(){
 
   it('getCurrentTimestamp', function(done){
     request
-    .post('localhost:4000')
+    .post(QX_URL)
     .send(param)
     .end(function(err, res){
       //240s delay
