@@ -35,9 +35,6 @@ Add as middleware to expressjs
     app.listen(3000);
 
 
-## Request the server
-
-    $curl localhost:3000/rpc
 
 Reference  
 [Qooxdoo JSON RPC spec](http://qooxdoo.org/docs/general/rpc/jsonrpc_server_specs)
