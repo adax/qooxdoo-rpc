@@ -11,16 +11,13 @@ const request = require('superagent');
 const assert  = require('assert');
 const should  = require('should');
 const QX_URL  = 'http://localhost:6000/rpc';
-const qx  = require('../index')
-const bp  = require('body-parser')
-const app = require('express')();
 
-function qx_param(service, method, params){
+function qx_param(conf){
   return {
     id: 0,
-    service: service || 'test',
-    method: method,
-    params: params || null  
+    service: conf.service || 'test',
+    method: conf.method,
+    params: conf.params || null  
   }
 }
 
@@ -28,16 +25,21 @@ describe('Standard API', function(){
 
   before(function(){
 
+    var qx      = require('../index')
+    var bp      = require('body-parser')
+    var app     = require('express')();
 
     app.use(bp.urlencoded({extended:false}))
     app.use(bp.json())
 
-  /*
-    app.service('test', function(){
-    });
-  */
+    qx.service('test', 
+    {
+      echo: function(args){
+        return args;
+      }   
+    })
 
-    app.use('/rpc', qx)
+    app.use('/rpc', qx.services)
     app.listen(6000)
   })
 
@@ -45,16 +47,14 @@ describe('Standard API', function(){
 
     var param = qx_param({
       method: "echo",
-      params: ["Hello World"]
+      params: ["hello world"]
     })    
 
     request
     .post(QX_URL)
     .send(param)
     .end(function(err, res){
-      console.log(res.body);
-      res.body.error.should.equal(null);
-      res.body.result.should.equal("Hello World");
+      res.body.result.should.equal('hello world');
       done() 
     })
   })

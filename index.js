@@ -9,67 +9,89 @@
 
 const msg = require('./lib/error');
 
-module.exports = function(req, res, next){
+var services = {};
 
-  req.service = function(){
-    console.log(req.body); 
+function runService(req, res, next){
+  
+  var service = req.body.service;
+  var method  = req.body.method;
+  var params  = req.body.params;
+  var id      = req.body.id;
+  var result  = null;
+
+  try{
+
+    switch(typeof services[service]){
+
+      case 'object':
+        result = handle_object(service, method, params);
+        break;
+
+      case 'function':
+        result = handle_function(method, params);
+        break;
+
+      default:
+        throw new Error ('Invalid callback function ' + service);
+        break;      
+    }
+
+    res.json({ 
+      id: id, 
+      result: result, 
+      error: null 
+    })
+  
+  }catch(e){
+
+    res.json({ 
+      id: id, 
+      result: null, 
+      error: e.toString() 
+    })
   }
-/* 
-  var qx = new Qooxdoo();
-
-  qx.id      = res.body.id;
-  qx.service = res.body.service;
-  qx.method  = res.body.method;
-  qx.params  = res.body.params;  
-*/
-  next()
 }
 
-function Qooxdoo(req, res, next){
 
-  console.log(req.body);
 
-  req.qx = req.body;   
-  req.service = function(){
-    console.log('hello');
+/**
+ * handle object callback
+ * @param string service service name
+ * @param string method method name to call
+ * @param string params method function args
+ */
+function handle_object(service, method, params){
+
+  var obj = services[service];
+
+  if(obj[method]){
+    return obj[method].apply(this, params);
+  }else{
+    throw new Error('Invalid class method ' +  method + ' in ' + service);
   }
-
-  next()
 }
 
 
 /**
- * Add service to match with the service request and
- * try to execute object method based on the request
- * @param string name service route
- * @param object cb callback object
+ * handle function callback
+ * @param string method method name
+ * @param string params function arguments
  */
-Qooxdoo.prototype.services = function(name, cb){
-
-  let method = this.qx.method;
-
-  try{ 
-
-    if(typeof cb != 'object'){
-      throw new Error(msg.code.CLASS_NOT_FOUND);
-    }
-
-    if(typeof cb[method] != 'function'){
-      throw new Error(msg.code.METHOD_NOT_FOUND);
-    }
-
-    res.json({
-      id: req.qx.id,
-      error: null,
-      result: cb[method].apply(this.qx.params)
-    })
-
-  }catch(e){
-
-    res.json({
-      id: req.qx.id,
-      error: e,
-      result: null
-    })  
-  }
+function handle_function(method, params){
+  return services[method].apply(this, params);
 }
+
+
+/**
+ * run callback object or function
+ * @param string name service name
+ * @param mixed  function or object
+ *        if function method will be ignored and function will be executed
+ *        if object, method will be executed
+ */
+function addService(name, cb){
+  services[name] = cb;
+}
+
+module.exports.services = runService;
+module.exports.service  = addService;
