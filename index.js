@@ -13,7 +13,7 @@ var services = {};
 
 function runService(req, res, next){
 
-  var result, query;
+  var result, error, query;
   var type = req.get('Content-Type');
 
   try{
@@ -63,20 +63,17 @@ function runService(req, res, next){
         throw (err.code.ILLEGAL_SERVICE);
         break;      
     }
-
-    res.json({ 
-      id: id, 
-      result: result, 
-      error: null 
-    })
   
   }catch(e){
-    res.json({ 
-      id: id, 
-      result: null, 
-      error: e
-    })
+    error  = e;
+    result = null;
   }
+
+  res.json({
+    id: id,
+    result: result,
+    error: error
+  })
 }
 
 
