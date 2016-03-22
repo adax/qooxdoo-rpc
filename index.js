@@ -20,11 +20,10 @@ function runService(req, res, next){
   var result  = null;
 
   try{
-
     var cls = services[service];
   
     if(!cls){
-      throw new Error(err.code.SERVICE_NOT_FOUND);
+      throw (err.code.SERVICE_NOT_FOUND);
     }
 
     switch(typeof cls){
@@ -38,7 +37,7 @@ function runService(req, res, next){
         break;
 
       default:
-        throw new Error (err.code.ILLEGAL_SERVICE);
+        throw (err.code.ILLEGAL_SERVICE);
         break;      
     }
 
@@ -52,7 +51,7 @@ function runService(req, res, next){
     res.json({ 
       id: id, 
       result: null, 
-      error: e.toString() 
+      error: e
     })
   }
 }
@@ -69,7 +68,7 @@ function handle_object(service, method, params){
   if(obj[method]){
     return obj[method].apply(this, params);
   }else{
-    throw new Error(err.code.METHOD_NOT_FOUND);
+    throw (err.code.METHOD_NOT_FOUND);
   }
 }
 
@@ -94,7 +93,7 @@ function addService(name, cb){
   if(typeof cb == 'function' || typeof cb == 'object'){
     services[name] = cb;
   }else{
-    throw new Error('Callback for ' + name + ' is not a function or object');
+    throw ('Callback for ' + name + ' is not a function or object');
   }
 }
 

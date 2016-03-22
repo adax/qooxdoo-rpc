@@ -8,29 +8,28 @@ Qooxdoo json rpc for nodejs express framework.
     var app = express()
     var bp  = require('body-parser')
     var qx  = require('qooxdoo-rpc')
-    var model = require('qooxdoo-sumisi');
 
-    qx.service('user', model);
-    qx.service('hello', hello);
-    qx.service('world', function(req, res, next){
-    
-      req.qx.service
-      req.qx.method
-      req.qx.params
+Service mapped to function.
 
-      res.body = {
-        result: {
-          origin: 
-          code:
-        }
-        error:
-        id: 
+    qx.service('user', function(){
+      console.log("hello world")
+    });
+
+Service mapped to an object.
+
+    qx.service('world', {
+
+      hello: function(args){
+        console.log('hello');
+      },
+
+      world: function(args){
+        console.log('world');
       }
-
-      res.body = res.qx.body(); 
-      res.type('application/json'); 
-      res.end();
     })
+
+
+Add as middleware to expressjs
 
     app.use('/rpc', qx);
     app.listen(3000);

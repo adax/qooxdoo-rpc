@@ -104,6 +104,10 @@ describe('Standard API', function(){
 
       getParam: function(param){
         return param;
+      },
+      
+      getCurrentTimestamp: function(param){
+        return  'new Date(Date.UTC(2006,5,20,22,18,42,223))';
       }
     })
 
@@ -437,8 +441,37 @@ describe('Standard API', function(){
     .post(QX_URL)
     .send(param)
     .end(function(err, res){
-      assert.equal(res.body.result.toString(), "");
+      assert.equal(res.body.result.toString(), "new Date(Date.UTC(2006,5,20,22,18,42,223))");
       done() 
     })
+  })
+})
+
+describe("Error message", function(){
+  it("Invalid service", function(done){
+    var param = qx_param({
+      service: "notValidService" 
+    })
+    
+    request
+    .post(QX_URL)
+    .end(function(err, res){
+      assert.equal(res.body.error.code, 2);
+      done() 
+    }) 
+  })
+
+  it("Invalid method", function(done){
+    var param = qx_param({
+      method: "notValidMethod" 
+    })
+    
+    request
+    .post(QX_URL)
+    .send(param)
+    .end(function(err, res){
+      assert.equal(res.body.error.code, 4);
+      done() 
+    }) 
   })
 })
