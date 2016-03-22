@@ -112,7 +112,6 @@ function handle_function(method, params){
  * @param mixed  function or object
  */
 function addService(name, cb){
-
   if(typeof cb == 'function' || typeof cb == 'object'){
     services[name] = cb;
   }else{
