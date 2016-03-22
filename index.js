@@ -30,7 +30,6 @@ function runService(req, res, next){
         }else{
           throw ('Other Error');
         }
-
         break;
 
       //not supported
