@@ -31,7 +31,7 @@ Service mapped to an object.
 
 Add as middleware to expressjs
 
-    app.use('/rpc', qx);
+    app.use('/rpc', qx.services);
     app.listen(3000);
 
 
