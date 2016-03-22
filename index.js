@@ -58,7 +58,6 @@ function runService(req, res, next){
 }
 
 
-
 /**
  * handle object callback
  * @param string service service name
@@ -89,12 +88,10 @@ function handle_function(method, params){
  * run callback object or function
  * @param string name service name
  * @param mixed  function or object
- *        if function method will be ignored and function will be executed
- *        if object, method will be executed
  */
 function addService(name, cb){
 
-  if(typeof cb == 'function' || typeof cb == 'obj'){
+  if(typeof cb == 'function' || typeof cb == 'object'){
     services[name] = cb;
   }else{
     throw new Error('Callback for ' + name + ' is not a function or object');

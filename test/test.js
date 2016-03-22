@@ -36,7 +36,75 @@ describe('Standard API', function(){
     {
       echo: function(args){
         return args;
-      }   
+      },
+
+      getInteger: function(args){
+        return parseInt(args); 
+      },
+
+      getFloat: function(args){
+        return parseFloat(args); 
+      },
+
+      getString: function(args){
+        return args.toString();
+      },
+
+      getArrayInteger: function(args){
+        return args;
+      },
+  
+      getArrayString: function(args){
+        return args;
+      },
+
+      getTrue: function(args){
+        return args;
+      },
+
+      getFalse: function(args){
+        return args;
+      },
+
+      getNull: function(args){
+        return args;
+      },
+
+      isInteger: function(n){
+        return n === +n && n === (n|0);
+      },
+
+      isFloat: function(n){
+        return n === +n && n !== (n|0);
+      },
+
+      isString: function(str){
+        return typeof str === "string";
+      },
+
+      isBoolean: function(value){
+        return typeof value === "boolean";
+      },
+
+      isArray: function(obj){
+        return Array.isArray(obj);
+      },
+
+      isObject: function(obj){
+        return typeof obj === 'object';
+      },
+
+      isNull: function(obj){
+        return obj === null;
+      },
+
+      getParams: function(param){
+        return param;
+      },
+
+      getParam: function(param){
+        return param;
+      }
     })
 
     app.use('/rpc', qx.services)
@@ -116,7 +184,7 @@ describe('Standard API', function(){
     .post(QX_URL)
     .send(param)
     .end(function(err, res){
-      res.body.result.should.equal(0.33333)
+      res.body.result.should.equal(0.3333333333333333)
       done() 
     })
   })
@@ -141,14 +209,14 @@ describe('Standard API', function(){
 
     var param = qx_param({
       method: 'getArrayInteger',
-      params: [1,2,3,4]
+      params: [[1,2,3,4]]
     })    
 
     request
     .post(QX_URL)
     .send(param)
     .end(function(err, res){
-      res.body.result.should.equal([1,2,3,4])
+      res.body.result.toString().should.equal([1,2,3,4].toString())
       done() 
     })
   })
@@ -157,14 +225,14 @@ describe('Standard API', function(){
 
     var param = qx_param({
       method: "getArrayString",
-      params: ["one", "two", "three", "four"]
+      params: [["one", "two", "three", "four"]]
     })    
 
     request
     .post(QX_URL)
     .send(param)
     .end(function(err, res){
-      res.body.result.should.equal(["one", "two", "three", "four"])
+      res.body.result.toString().should.equal(["one", "two", "three", "four"].toString())
       done() 
     })
   })
@@ -173,7 +241,7 @@ describe('Standard API', function(){
 
     var param = qx_param({
       method: "getObject",
-      params: {}
+      params: [{}]
     })
 
     request
@@ -186,131 +254,190 @@ describe('Standard API', function(){
   })
 
   it('getTrue', function(done){
+  
+    var param = qx_param({
+      method: "getTrue",
+      params: [true]
+    })
+
     request
     .post(QX_URL)
     .send(param)
     .end(function(err, res){
-      //240s delay
+      assert.equal(res.body.result, true);
       done() 
     })
   })
 
   it('getFalse', function(done){
+    var param = qx_param({
+      method: "getFalse",
+      params: [false]
+    })
     request
     .post(QX_URL)
     .send(param)
     .end(function(err, res){
-      //240s delay
+      assert.equal(res.body.result, false);
       done() 
     })
   })
 
   it('getNull', function(done){
+    var param = qx_param({
+      method: "getNull",
+      params: [null]
+    })
     request
     .post(QX_URL)
     .send(param)
     .end(function(err, res){
-      //240s delay
+      assert.equal(res.body.result, null);
       done() 
     })
   })
 
   it('isInteger', function(done){
+    var param = qx_param({
+      method: "isInteger",
+      params: [1]
+    })
     request
     .post(QX_URL)
     .send(param)
     .end(function(err, res){
-      //240s delay
+      assert.equal(res.body.result, true);
       done() 
     })
   })
 
   it('isFloat', function(done){
+    var param = qx_param({
+      method: "isFloat",
+      params: [1.4]
+    })
     request
     .post(QX_URL)
     .send(param)
     .end(function(err, res){
-      //240s delay
+      assert.equal(res.body.result, true);
       done() 
     })
   })
 
   it('isString', function(done){
+    var param = qx_param({
+      method: "isString",
+      params: ["hello world"]
+    })
+
     request
     .post(QX_URL)
     .send(param)
     .end(function(err, res){
-      //240s delay
+      assert.equal(res.body.result, true);
       done() 
     })
   })
 
   it('isBoolean', function(done){
+    var param = qx_param({
+      method: "isBoolean",
+      params: [true]
+    })
+
     request
     .post(QX_URL)
     .send(param)
     .end(function(err, res){
-      //240s delay
+      assert.equal(res.body.result, true);
       done() 
     })
   })
 
   it('isArray', function(done){
+    var param = qx_param({
+      method: "isArray",
+      params: [[1,2,3]]
+    })
+
     request
     .post(QX_URL)
     .send(param)
     .end(function(err, res){
-      //240s delay
+      assert.equal(res.body.result, true);
       done() 
     })
   })
 
   it('isObject', function(done){
+    var param = qx_param({
+      method: "isObject",
+      params: [{}]
+    })
+
     request
     .post(QX_URL)
     .send(param)
     .end(function(err, res){
-      //240s delay
+      assert.equal(res.body.result, true);
       done() 
     })
   })
 
   it('isNull', function(done){
+    var param = qx_param({
+      method: "isNull",
+      params: [null]
+    })
     request
     .post(QX_URL)
     .send(param)
     .end(function(err, res){
-      //240s delay
+      assert.equal(res.body.result, true);
       done() 
     })
   })
 
   it('getParams', function(done){
+    var param = qx_param({
+      method: "getParams",
+      params: ["somewhere"]
+    })
+
     request
     .post(QX_URL)
     .send(param)
     .end(function(err, res){
-      //240s delay
+      assert.equal(res.body.result.toString(), param.params.toString());
       done() 
     })
   })
 
   it('getParam', function(done){
+    var param = qx_param({
+      method: "getParam",
+      params: ["somewhere", "in", "the", "world"]
+    })
     request
     .post(QX_URL)
     .send(param)
     .end(function(err, res){
-      //240s delay
+      assert.equal(res.body.result.toString(), "somewhere");
       done() 
     })
   })
 
   it('getCurrentTimestamp', function(done){
+    var param = qx_param({
+      method: "getCurrentTimestamp",
+    })
+
     request
     .post(QX_URL)
     .send(param)
     .end(function(err, res){
-      //240s delay
+      assert.equal(res.body.result.toString(), "");
       done() 
     })
   })
