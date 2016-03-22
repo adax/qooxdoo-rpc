@@ -10,38 +10,23 @@
 const err    = require('./lib/error');
 var services = {};
 
+/**
+ * interface with express middleware
+ * @param object req request object
+ * @param object res response object
+ * @param next 
+ */
 function runService(req, res, next){
   var result, error, q;
-  var type = req.get('Content-Type');
 
   try{
-    switch(type){
-      //XmlHTTPTransport
-      case 'application/json':
-        q = req.body;
-        break;
+    q = getRequest(req);
 
-      //IFrameTransport
-      case 'application/x-www-form-urlencoded':
-        if(req.body['_data_']){
-          q = req.body._data_;
-        }else{
-          throw ('Other Error');
-        }
-        break;
-
-      //not supported
-      default:
-        throw ('Other Error');
-        break;      
-    }
- 
     if(!services[q.service]){
       throw (err.code.SERVICE_NOT_FOUND);
     }
 
     switch(typeof services[q.service]){
-
       case 'object':
         result = handle_object(q.service, q.method, q.params);
         break;
@@ -65,6 +50,37 @@ function runService(req, res, next){
     result: result,
     error: error
   })
+}
+
+
+/**
+ * get request param based on supported content-type
+ * @param object req
+ * @return object qooxdoo rpc request
+ */
+function getRequest(req){
+  var type = req.get('Content-Type');
+  var query;
+
+  switch(type){
+    case 'application/json': //XmlHTTPTransport
+      query = req.body;
+      break;
+
+    case 'application/x-www-form-urlencoded': //IFrameTransport
+      if(req.body['_data_']){
+        query = req.body._data_;
+      }else{
+        throw ('Other Error');
+      }
+      break;
+
+    default: //not supported
+      throw ('Other Error');
+      break;      
+  }
+
+  return query;
 }
 
 
