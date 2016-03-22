@@ -7,7 +7,7 @@
 
 'use strict';
 
-const msg = require('./lib/error');
+const err = require('./lib/error');
 
 var services = {};
 
@@ -21,7 +21,13 @@ function runService(req, res, next){
 
   try{
 
-    switch(typeof services[service]){
+    var cls = services[service];
+  
+    if(!cls){
+      throw new Error(err.code.SERVICE_NOT_FOUND);
+    }
+
+    switch(typeof cls){
 
       case 'object':
         result = handle_object(service, method, params);
@@ -32,7 +38,7 @@ function runService(req, res, next){
         break;
 
       default:
-        throw new Error ('Invalid callback function ' + service);
+        throw new Error (err.code.ILLEGAL_SERVICE);
         break;      
     }
 
@@ -43,7 +49,6 @@ function runService(req, res, next){
     })
   
   }catch(e){
-
     res.json({ 
       id: id, 
       result: null, 
@@ -61,13 +66,11 @@ function runService(req, res, next){
  * @param string params method function args
  */
 function handle_object(service, method, params){
-
   var obj = services[service];
-
   if(obj[method]){
     return obj[method].apply(this, params);
   }else{
-    throw new Error('Invalid class method ' +  method + ' in ' + service);
+    throw new Error(err.code.METHOD_NOT_FOUND);
   }
 }
 
@@ -90,7 +93,12 @@ function handle_function(method, params){
  *        if object, method will be executed
  */
 function addService(name, cb){
-  services[name] = cb;
+
+  if(typeof cb == 'function' || typeof cb == 'obj'){
+    services[name] = cb;
+  }else{
+    throw new Error('Callback for ' + name + ' is not a function or object');
+  }
 }
 
 module.exports.services = runService;
