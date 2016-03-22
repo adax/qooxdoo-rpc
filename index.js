@@ -12,15 +12,39 @@ const err = require('./lib/error');
 var services = {};
 
 function runService(req, res, next){
-  
-  var service = req.body.service;
-  var method  = req.body.method;
-  var params  = req.body.params;
-  var id      = req.body.id;
-  var result  = null;
+
+  var result, query;
+  var type = req.get('Content-Type');
 
   try{
-    var cls = services[service];
+    switch(type){
+      //XmlHTTPTransport
+      case 'application/json':
+        query = req.body;
+        break;
+
+      //IFrameTransport
+      case 'application/x-www-form-urlencoded':
+        if(req.body['_data_']){
+          query = req.body._data_;
+        }else{
+          throw ('Other Error');
+        }
+
+        break;
+
+      //not supported
+      default:
+        throw ('Other Error');
+        break;      
+    }
+ 
+ 
+    var service = query.service;
+    var method  = query.method;
+    var params  = query.params;
+    var id      = query.id;
+    var cls     = services[service];
   
     if(!cls){
       throw (err.code.SERVICE_NOT_FOUND);

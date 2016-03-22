@@ -455,6 +455,7 @@ describe("Error message", function(){
     
     request
     .post(QX_URL)
+    .send(param)
     .end(function(err, res){
       assert.equal(res.body.error.code, 2);
       done() 
