@@ -7,26 +7,24 @@
 
 'use strict';
 
-const err = require('./lib/error');
-
+const err    = require('./lib/error');
 var services = {};
 
 function runService(req, res, next){
-
-  var result, error, query;
+  var result, error, q;
   var type = req.get('Content-Type');
 
   try{
     switch(type){
       //XmlHTTPTransport
       case 'application/json':
-        query = req.body;
+        q = req.body;
         break;
 
       //IFrameTransport
       case 'application/x-www-form-urlencoded':
         if(req.body['_data_']){
-          query = req.body._data_;
+          q = req.body._data_;
         }else{
           throw ('Other Error');
         }
@@ -38,25 +36,18 @@ function runService(req, res, next){
         break;      
     }
  
- 
-    var service = query.service;
-    var method  = query.method;
-    var params  = query.params;
-    var id      = query.id;
-    var cls     = services[service];
-  
-    if(!cls){
+    if(!services[q.service]){
       throw (err.code.SERVICE_NOT_FOUND);
     }
 
-    switch(typeof cls){
+    switch(typeof services[q.service]){
 
       case 'object':
-        result = handle_object(service, method, params);
+        result = handle_object(q.service, q.method, q.params);
         break;
 
       case 'function':
-        result = handle_function(method, params);
+        result = handle_function(q.method, q.params);
         break;
 
       default:
@@ -65,12 +56,12 @@ function runService(req, res, next){
     }
   
   }catch(e){
-    error  = e;
     result = null;
+    error  = e;
   }
 
   res.json({
-    id: id,
+    id: q.id,
     result: result,
     error: error
   })
