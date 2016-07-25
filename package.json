@@ -1,6 +1,6 @@
 {
   "name": "qooxdoo-rpc",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "Qooxdoo json rpc server for node js express framework",
   "main": "index.js",
   "directories": {
