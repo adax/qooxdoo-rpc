@@ -4,37 +4,40 @@ Qooxdoo json rpc for nodejs express framework.
 
 
 ## Usage example
+```javascript
+var app = express()
+var bp  = require('body-parser')
+var qx  = require('qooxdoo-rpc')
+```
 
-    var app = express()
-    var bp  = require('body-parser')
-    var qx  = require('qooxdoo-rpc')
+###Service mapped to function.
+```javascript
+qx.service('user', function(){
+  console.log("hello world")
+});
+```
 
-Service mapped to function.
+###Service mapped to an object.
+```javascript
+qx.service('world', {
 
-    qx.service('user', function(){
-      console.log("hello world")
-    });
+  hello: function(args){
+    console.log('hello');
+  },
 
-Service mapped to an object.
+  world: function(args){
+    console.log('world');
+  }
+})
+```
 
-    qx.service('world', {
+###Add as middleware to expressjs
 
-      hello: function(args){
-        console.log('hello');
-      },
-
-      world: function(args){
-        console.log('world');
-      }
-    })
-
-
-Add as middleware to expressjs
-
-    app.use('/rpc', qx.services);
-    app.listen(3000);
-
+```javascript
+app.use('/rpc', qx.services);
+app.listen(3000);
+```
 
 
-Reference  
+##Reference  
 [Qooxdoo JSON RPC spec](http://qooxdoo.org/docs/general/rpc/jsonrpc_server_specs)
