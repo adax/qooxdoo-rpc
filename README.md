@@ -1,7 +1,8 @@
 # Qooxdoo RPC
 
-Qooxdoo json rpc for nodejs express framework.
+[![Build Status](https://travis-ci.org/paragasu/qooxdoo-rpc.svg?branch=master)](https://travis-ci.org/paragasu/qooxdoo-rpc)
 
+Qooxdoo json rpc for nodejs express framework.
 
 ## Usage example
 ```javascript
